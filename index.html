@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Dáma játék</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(8, 60px);
+      grid-template-rows: repeat(8, 60px);
+      border: 4px solid #333;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .white {
+      background-color: #eee;
+    }
+    .black {
+      background-color: #666;
+    }
+    .piece {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+    .red {
+      background-color: red;
+    }
+    .blue {
+      background-color: blue;
+    }
+    .selected {
+      outline: 3px solid yellow;
+    }
+  </style>
+</head>
+<body>
+  <h1>Dáma-szerű játék</h1>
+  <div class="board" id="board"></div>
+
+  <script>
+    const board = document.getElementById('board');
+    let selectedPiece = null;
+
+    function createBoard() {
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          const cell = document.createElement('div');
+          cell.classList.add('cell');
+          cell.classList.add((row + col) % 2 === 0 ? 'white' : 'black');
+          cell.dataset.row = row;
+          cell.dataset.col = col;
+
+          if (row < 3 && (row + col) % 2 === 1) {
+            const piece = document.createElement('div');
+            piece.classList.add('piece', 'red');
+            cell.appendChild(piece);
+          }
+          if (row > 4 && (row + col) % 2 === 1) {
+            const piece = document.createElement('div');
+            piece.classList.add('piece', 'blue');
+            cell.appendChild(piece);
+          }
+
+          cell.addEventListener('click', onCellClick);
+          board.appendChild(cell);
+        }
+      }
+    }
+
+    function onCellClick(e) {
+      const cell = e.currentTarget;
+      const piece = cell.querySelector('.piece');
+
+      if (piece) {
+        if (selectedPiece) selectedPiece.classList.remove('selected');
+        selectedPiece = piece;
+        selectedPiece.classList.add('selected');
+      } else if (selectedPiece) {
+        const targetCell = e.currentTarget;
+        if (!targetCell.querySelector('.piece')) {
+          targetCell.appendChild(selectedPiece);
+          selectedPiece.classList.remove('selected');
+          selectedPiece = null;
+        }
+      }
+    }
+
+    createBoard();
+  </script>
+</body>
+</html>
